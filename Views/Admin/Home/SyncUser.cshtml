@@ -1,0 +1,113 @@
+﻿@model QLHN.ViewModels.Api.VMSyncUser
+<div class="card card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <h3 class="card-label">
+                @ViewData["Title"]
+                <span class="d-block text-muted pt-2 font-size-sm">
+                    Đồng bộ tài khoản
+                    <span style="color:blue; font-weight:bold">@Funtions_Global.GetSsAdmin(HttpContextAccessor.HttpContext.Session, "Username")</span>
+                    <a href="#" onclick="CheckSync()">Kiểm tra tài khoản đồng bộ</a>
+                </span>
+            </h3>
+        </div>
+    </div>
+    <!--begin::Form-->
+    <form asp-action="SyncUser" asp-controller="Home" method="post" id="formData">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="text-align:center;" ></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-2"></div>
+                <div class="col-xl-7">
+                    <!--begin::Group-->
+                    <div class="form-group row">
+                        <label class="col-form-label col-3 text-lg-right text-left">Mật khẩu hiện tại:</label>
+                        <div class="col-9">
+                            <input class="form-control" asp-for="PasswordNCC" onmouseover="this.type='text'" onmouseout="this.type='password'">
+                            <span asp-validation-for="PasswordNCC" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!--end::Group-->
+                    <!--begin::Group-->
+                    <div class="form-group row">
+                        <label class="col-form-label col-3 text-lg-right text-left">Tài khoản đồng bộ :</label>
+                        <div class="col-9">
+                            <input class="form-control" asp-for="Username">
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!--end::Group-->
+                    <!--begin::Group-->
+                    <div class="form-group row">
+                        <label class="col-form-label col-3 text-lg-right text-left">Mật khẩu tài khoản đồng bộ:</label>
+                        <div class="col-9">
+                            <input class="form-control" type="password" asp-for="Password"
+                                   onmouseover="this.type='text'" onmouseout="this.type='password'">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!--end::Group-->
+                </div>
+            </div>
+        </div>
+        @*<input name="UrlSso" id="UrlSso" value="@ViewData["url"]" />
+        <input name="Username_HienTai" id="Username_HienTai" value="@Funtions_Global.GetSsAdmin(HttpContextAccessor.HttpContext.Session, "Username")" />*@
+
+        <div class="card-footer" style="text-align:center">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-danger"><i class="la la-reply"></i>Quay lại</a>&ensp;
+            <button type="reset" class="btn btn-secondary"><i class="la la-refresh"></i>Nhập lại</button>&ensp;
+            <button type="submit" class="btn btn-primary mr-2"><i class="la la-check"></i>Đồng bộ</button>
+        </div>
+    </form>
+    <!--end::Form-->
+</div>
+<!-- Modal thông báo-->
+<div class="modal fade" id="Show_Modal_ThongBao_Sync" style="padding-top:200px;" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin tài khoản đồng bộ
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div id="Replace_Content_ThongBao_Sync">
+                <!-- Nội dung được thay thế-->
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+<script>
+    function CheckSync() {
+        $.ajax({
+            url: '/CheckSync',
+            type: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == "success") {
+                    $('#Replace_Content_ThongBao_Sync').html(data.message).promise().done(function () {
+                        $('#Show_Modal_ThongBao_Sync').modal("show");
+                    });
+                }
+                else {
+                    toastr.error(data.message, "Lỗi");
+                    const myTimeout = setTimeout(Login, 3000);
+
+                }
+            }
+        });
+    }
+
+    function Login() {
+        window.location.href = '/Login';
+    }
+</script>

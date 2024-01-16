@@ -1,0 +1,85 @@
+﻿@{
+    var TotalRecord = ViewData["TotalRecord"];
+    var PageCurrent = ViewData["PageCurrent"];
+    var PageTotal = ViewData["PageTotal"];
+    var PageRange = (List<int>)ViewData["PageRange"];
+}
+
+
+<div class="row">
+    <div class="col-xl-12" style="text-align:right">
+        <div class="form-group fv-plugins-icon-container">
+            @if ((int)PageCurrent == 1)
+            {
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1 disabled" disabled>
+                    <i class="ki ki-bold-double-arrow-back icon-xs"></i>
+                </button>
+
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1 disabled" disabled>
+                    <i class="ki ki-bold-arrow-back icon-xs"></i>
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1" onclick="ClickPage(1)" title="Trang đầu">
+                    <i class="ki ki-bold-double-arrow-back icon-xs"></i>
+                </button>
+
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1" onclick="ClickPage((@PageCurrent -1) )" title="Trang trước">
+                    <i class="ki ki-bold-arrow-back icon-xs"></i>
+                </button>
+            }
+
+            @if ((int)PageCurrent - 2 > 1 && (int)PageTotal > 5)
+            {
+                <button type="button" class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1" onclick="ClickPage(1)">1</button>
+                @if ((int)PageCurrent - 3 != 1)
+                {
+                    <button type="button" class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1 disabled" disabled>...</button>
+                }
+            }
+
+            @foreach (int p_r in PageRange)
+            {
+                @if (p_r == (int)PageCurrent)
+                {
+                    <button type="button" class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1 btn-hover-primary active">@p_r</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1" onclick="ClickPage(@p_r)">@p_r</button>
+                }
+            }
+
+            @if ((int)PageCurrent + 2 < (int)PageTotal && (int)PageTotal > 5)
+            {
+
+                @if ((int)PageCurrent + 3 != (int)PageTotal)
+                {
+                    <button type="button" class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1 disabled" disabled>...</button>
+                }
+                <button type="button" class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1" onclick="ClickPage(@PageTotal)">@PageTotal</button>
+            }
+
+            @if ((int)PageCurrent == (int)PageTotal || (int)PageTotal == 0)
+            {
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1 disabled" disabled>
+                    <i class="ki ki-bold-arrow-next icon-xs"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1 disabled" disabled>
+                    <i class="ki ki-bold-double-arrow-next icon-xs"></i>
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1" onclick="ClickPage((@PageCurrent + 1))" title="Trang tiếp">
+                    <i class="ki ki-bold-arrow-next icon-xs"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-sm btn-light mr-2 my-1" onclick="ClickPage(@PageTotal)" title="Trang cuối">
+                    <i class="ki ki-bold-double-arrow-next icon-xs"></i>
+                </button>
+            }
+
+        </div>
+    </div>
+</div>

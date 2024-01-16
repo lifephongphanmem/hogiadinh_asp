@@ -1,0 +1,364 @@
+﻿@model IEnumerable<Permissions>
+
+@section custom_style{
+    <link rel="stylesheet" type="text/css" href="~/Admin/assets/datatables/bootstrap/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="~/Admin/assets/datatables/bootstrap/dataTables.css" />
+}
+
+@section custom_script{
+    <script type="text/javascript" src="~/Admin/assets/datatables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/datatables/bootstrap/dataTables.bootstrap.js"></script>
+    <script src="~/Admin/assets/datatables/scripts/table-managed.js"></script>
+    <script>
+        $(document).ready(function () {
+            TableManaged.init();
+        });
+    </script>
+}
+@{
+    int record_id = 1;
+    var DSPermissions = (IEnumerable<RolesAction>)ViewData["DSPermissions"];
+}
+<div class="card card-custom wave wave-animate-slower">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                @ViewData["Title"]
+                <span class="d-block text-muted pt-2 font-size-sm">
+                    Phân quyền chức năng truy cập vào hệ thống của <span style="color:blue; font-weight:bold">@ViewData["Username"]</span>
+                </span>
+            </h3>
+        </div>
+        <div class="card-toolbar">
+            <a asp-controller="Users" asp-action="Index" class="btn btn-danger font-weight-bolder"><i class="la la-reply"></i>Quay lại</a>&ensp;
+            @if (Funtions_Global.CheckPermission(HttpContextAccessor.HttpContext.Session, "systems.users", "Create"))
+            {
+                <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#Create_Modal" onclick="ClearFrmCreate()">
+                    <i class="la la-plus"></i>Thêm mới
+                </button>
+            }
+            <!--end::Button-->
+        </div>
+    </div>
+    <hr />
+    <div class="card-body">
+        <input hidden id="KeyLink" name="KeyLink" value="@ViewData["Username"]" />
+        <!--begin: Datatable-->
+        <table class="table table-striped table-bordered table-hover table-responsive" id="sample_3">
+            <thead>
+                <tr style="text-align:center">
+                    <td width="2%">#</td>
+                    <th>Chức năng</th>
+                    <th width="10%">Xem</th>
+                    <th width="10%">Thêm</th>
+                    <th width="10%">Sửa</th>
+                    <th width="10%">Xóa</th>
+                    <th width="10%">Chuyển/<br />Xét Duyệt</th>
+                    <th width="15%">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:center">@(record_id++)</td>
+                            <td style="font-weight:bold;color:blue">@item.MoTa</td>
+                            <td style="text-align:center">
+                                @if (item.Index)
+                                {<i class="la la-check icon-2x text-info mr-5"></i>}
+                                else
+                                {<i class="la la-remove icon-2x text-danger mr-5"></i>}
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Create)
+                                {<i class="la la-check icon-2x text-info mr-5"></i>}
+                                else
+                                {<i class="la la-remove icon-2x text-danger mr-5"></i>}
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Edit)
+                                {<i class="la la-check icon-2x text-info mr-5"></i>}
+                                else
+                                {<i class="la la-remove icon-2x text-danger mr-5"></i>}
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Delete)
+                                {<i class="la la-check icon-2x text-info mr-5"></i>}
+                                else
+                                {<i class="la la-remove icon-2x text-danger mr-5"></i>}
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Approve)
+                                {<i class="la la-check icon-2x text-info mr-5"></i>}
+                                else
+                                {<i class="la la-remove icon-2x text-danger mr-5"></i>}
+                            </td>
+                            <td>
+                                <button type="button" onclick="editId('@item.Id')" data-target="#Edit_Modal" data-toggle="modal"
+                                        class="btn btn-sm btn-clean btn-icon" title="Chỉnh sửa">
+                                    <i class="icon-lg la la-edit text-primary"></i>
+                                </button>
+
+                                <button type="button" class="btn btn-sm btn-clean btn-icon" title="Xóa" data-toggle="modal" data-target="#Delete_Modal"
+                                        onclick="getId('@item.Id', '@item.MoTa')">
+                                    <i class="icon-lg la la-trash text-danger"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <!--end: Datatable-->
+    </div>
+</div>
+
+<!--Create Modal-->
+<div class="modal fade" id="Create_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin nhóm quyền
+                    <span class="d-block text-muted pt-2 font-size-sm">
+                        Thêm mới chức năng truy cập cho nhóm quyền
+                    </span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <!--begin::Input-->
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Chức năng</label>
+                            <select class="form-control" id="roles" name="roles">
+                                <option value="">---Chọn Quyền---</option>
+                                @foreach (var item in DSPermissions)
+                                {
+                                    <option value="@item.Roles">@item.MoTa</option>
+                                }
+                            </select>
+                        </div>
+                        <!--end::Input-->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <!--begin::Input-->
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Tương tác với dữ liệu</label>
+                            <div class="checkbox-inline">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="Index" name="Index" />
+                                    <span></span>
+                                    Xem
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="Create" name="Create" value="true" />
+                                    <span></span>
+                                    Thêm
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="Edit" name="Edit" value="true" />
+                                    <span></span>
+                                    Sửa
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="Delete" name="Delete" value="true" />
+                                    <span></span>
+                                    Xóa
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="Approve" name="Approve" value="true" />
+                                    <span></span>
+                                    Chuyển/Xét duyệt
+                                </label>
+                            </div>
+                        </div>
+                        <!--end::Input-->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="StorePermission()">Thêm mới</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Edit Modal-->
+<div class="modal fade" id="Edit_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin tài khoản
+                    <span class="d-block text-muted pt-2 font-size-sm">
+                        Chỉnh sửa chức năng truy cập cho nhóm quyền
+                        <span style="font-weight:bold; color:blue">@ViewData["Username"]</span>
+                    </span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="edit_record">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="UpdatePermission()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Delete Modal-->
+<div class="modal fade" id="Delete_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin tài khoản
+                    <span class="d-block text-muted pt-2 font-size-sm">
+                        Đồng ý xóa chức năng truy cập cho nhóm quyền
+                    </span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-xl-12">
+                    <div class="form-group fv-plugins-icon-container">
+                        <label>Chức năng </label>
+                        <b id="roles_delete" style="color: #0000FF"></b>
+                    </div>
+                </div>
+                <input hidden id="id_delete" name="id_delete" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="DeletePermission()">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ClearFrmCreate() {
+        document.getElementById("roles").value = '';
+        document.getElementById("Index").checked = false;
+        document.getElementById("Create").checked = false;
+        document.getElementById("Edit").checked = false;
+        document.getElementById("Delete").checked = false;
+        document.getElementById("Approve").checked = false;
+    }
+    function StorePermission() {
+        if ($('#roles').val() != '') {
+            $.ajax({
+                url: '/Permissions/Store',
+                type: 'POST',
+                data: {
+                    Username: $('#KeyLink').val(),
+                    Roles: $('#roles').val(),
+                    Index: $('#Index').is(":checked"),
+                    Create: $('#Create').is(":checked"),
+                    Edit: $('#Edit').is(":checked"),
+                    Delete: $('#Delete').is(":checked"),
+                    Approve: $('#Approve').is(":checked"),
+                    Status: 'Disable'
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.success("Cập nhật thông tin thành công!", "Thành công!!!");
+                        location.reload();
+                    } else {
+                        toastr.error(data.message, "Lỗi!");
+                    }
+                }
+            })
+        } else {
+            toastr.error("Chức năng không được để trống!!!", "Lỗi!");
+        }
+    }
+
+    function editId(id_edit) {
+        $.ajax({
+            url: '/Permissions/Edit',
+            type: 'POST',
+            data: {
+                id: id_edit
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success("Cập nhật thông tin thành công!", "Thành công!");
+                    $('#edit_record').replaceWith(data.message);
+                } else {
+                    toastr.error(data.message, "Lỗi!!!");
+                }
+            }
+        })
+    }
+
+    function UpdatePermission() {
+        if ($('#roles').val() != '') {
+            $.ajax({
+                url: '/Permissions/Update',
+                type: 'POST',
+                data: {
+                    Index: $('#Index_edit').is(":checked"),
+                    Create: $('#Create_edit').is(":checked"),
+                    Edit: $('#Edit_edit').is(":checked"),
+                    Delete: $('#Delete_edit').is(":checked"),
+                    Approve: $('#Approve_edit').is(":checked"),
+                    Username: $('#KeyLink').val(),
+                    Status: 'Disable',
+                    Id: $('#Id_edit').val(),
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.success("Cập nhật thông tin thành công!", "Thành công!!!");
+                        location.reload();
+                    } else {
+                        toastr.error(data.message, "Lỗi!");
+                    }
+                }
+            })
+        } else {
+            toastr.error("Chức năng không được để trống!!!", "Lỗi!");
+        }
+    }
+
+    function getId(id, roles) {
+        document.getElementById("id_delete").value = id;
+        document.getElementById("roles_delete").innerHTML = roles;
+    }
+
+    function DeletePermission() {
+        $.ajax({
+            url: '/Permissions/Delete',
+            type: 'POST',
+            data: {
+                Username: $('#KeyLink').val(),
+                Id: $('#id_delete').val(),
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success("Cập nhật thông tin thành công!", "Thành công!!!");
+                    location.reload();
+                } else {
+                    toastr.error(data.message, "Lỗi!");
+                }
+            }
+        })
+    }
+</script>

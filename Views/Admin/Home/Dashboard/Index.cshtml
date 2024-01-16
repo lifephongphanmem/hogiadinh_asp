@@ -1,0 +1,13 @@
+﻿<div class="d-flex flex-column-fluid">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <div class="text-center pt-10 pb-10">
+            <h1 class="font-weight-bolder text-dark mb-6" style="text-transform:uppercase">Quản lý hộ nghèo</h1>
+            @* <div class="h4 text-dark-50" style="text-transform:uppercase; font-style:italic">@ViewData["TenTinh"]</div> *@
+        </div>
+        @* @await Html.PartialAsync("~/Views/Admin/Home/Dashboard/Actions.cshtml") *@
+        @* @await Html.PartialAsync("~/Views/Admin/Home/Dashboard/Update.cshtml") *@
+        @await Html.PartialAsync("~/Views/Admin/Home/Dashboard/Supports.cshtml")
+    </div>
+    <!--end::Container-->
+</div>

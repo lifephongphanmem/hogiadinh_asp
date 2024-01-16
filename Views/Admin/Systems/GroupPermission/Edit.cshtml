@@ -1,0 +1,69 @@
+﻿@model QLHN.ViewModels.Systems.VMGroupPermissionCe
+@section custom_style {
+    <link rel="stylesheet" type="text/css" href="~/Admin/assets/datatables/bootstrap/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="~/Admin/assets/datatables/bootstrap/dataTables.css" />
+}
+
+@section custom_script{
+    <script src="~/Admin/assets/js/pages/crud/forms/widgets/jquery-mask.js"></script>
+    <script src="~/Admin/assets/js/pages/crud/forms/widgets/select2.js"></script>
+
+    <script type="text/javascript" src="~/Admin/assets/datatables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/datatables/bootstrap/dataTables.bootstrap.js"></script>
+     <script src="~/Admin/assets/datatables/scripts/table-nosort.js"></script>
+    <script>
+        $(document).ready(function () {
+            TableManaged3.init();
+        });
+    </script>
+}
+<div class="card card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <h3 class="card-label">
+                @ViewData["Title"]
+                <span class="d-block text-muted pt-2 font-size-sm">
+                    Chỉnh sửa nhóm quyền truy cập hệ thống
+                </span>
+            </h3>
+        </div>
+    </div>
+    <!--begin::Form-->
+    <form asp-controller="GroupPermission" asp-action="Update" method="post">
+        <input hidden id="KeyLink" name="KeyLink" asp-for="KeyLink"/>
+        <input hidden id="Id" name="Id" asp-for="Id"/>
+        <div class="card-body">
+            <div class="mb-3 font-weight-bold font-size-lg">
+                <label style="color: blue; text-decoration-line: underline; font-weight: bold">Thông tin nhóm quyền:</label>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="form-group">
+                        <label>Tên nhóm</label>
+                        <input type="text" class="form-control" asp-for="GroupName" />
+                        <span asp-validation-for="GroupName" class="form-text text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <input type="text" class="form-control" asp-for="MoTa" />
+                    </div>
+                </div>
+            </div>
+            @await Html.PartialAsync("~/Views/Admin/Systems/GroupPermission/Permission.cshtml")
+
+        </div>
+        <div class="card-footer" style="text-align:center">
+            <a asp-controller="GroupPermission" asp-action="Index" class="btn btn-danger">
+                <i class="la la-reply"></i>Quay lại
+            </a>&ensp;
+            <button type="reset" class="btn btn-secondary"><i class="la la-refresh"></i>Nhập lại</button>&ensp;
+            <button type="submit" class="btn btn-primary mr-2"><i class="la la-check"></i>Cập nhật</button>
+        </div>
+    </form>
+    <!--end::Form-->
+</div>
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

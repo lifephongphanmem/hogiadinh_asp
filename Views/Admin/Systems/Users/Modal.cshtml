@@ -1,0 +1,287 @@
+﻿@{
+    var districts = (IEnumerable<Districts>)ViewData["Districts"];
+    var towns = (IEnumerable<Towns>)ViewData["Towns"];
+    var GroupPer = (IEnumerable<GroupPermission>)ViewData["GroupPer"];
+}
+<div class="modal fade" id="Create_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin tài khoản
+                    <span class="d-block text-muted pt-2 font-size-sm">Thêm mới thông tin tài khoản truy cập</span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="data_create">
+                    <div class="col-xl-6">
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Quận/huyện: </label>
+                            <select class="form-control" id="mahuyen_create" name="mahuyen_create" onchange="getTowns()">
+                                <option value="all">---Chọn đơn vị---</option>
+                                @foreach (var item in districts)
+                                {
+                                    <option value="@item.MaHuyen">@item.TenHuyen</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Xã/phường: </label>
+                            <select class="form-control" id="maxa_create" name="maxa_create">
+                                <option value="all">---Chọn đơn vị---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-12">
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Tên đơn vị: </label>
+                            <input type="text" id="name_create" name="name_create" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Username: </label>
+                            <input type="text" id="username_create" name="username_create" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Password: </label>
+                            <input type="text" id="password_create" name="password_create" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="form-group fv-plugins-icon-container">
+                            <label>Nhóm quyền: </label>
+                            <select id="group_create" name="group_create" class="form-control">
+                                @foreach (var item in GroupPer)
+                                {
+                                    <option value="@item.KeyLink">@item.GroupName</option>
+                                }
+                                <option value="K">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="Store()">Thêm mới</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Edit Modal-->
+<div class="modal fade" id="Edit_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin đơn vị
+                    <span class="d-block text-muted pt-2 font-size-sm">Chỉnh sửa thông tin quận/huyện</span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="edit_thongtin">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="Update()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Delete Modal-->
+<div class="modal fade" id="Delete_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin đơn vị
+                    <span class="d-block text-muted pt-2 font-size-sm">Đồng ý xóa thông tin đơn vị ???</span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <form asp-controller="Users" asp-action="Delete">
+                <div class="modal-body">
+                    <div class="form-group fv-plugins-icon-container">
+                        <label>
+                            Username:&nbsp;<b id="username_delete" style="color: #0000FF"></b>
+                            - Tên tài khoản:&nbsp;<b id="name_delete" style="color: #0000FF"></b>
+                        </label>
+
+                    </div>
+                    <input hidden id="id_delete" name="id_delete" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Đồng ý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Reset Modal-->
+<div class="modal fade" id="Reset_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-label">
+                    Thông tin đơn vị
+                    <span class="d-block text-muted pt-2 font-size-sm">Đồng ý thay đổi mật khẩu về mặc định???</span>
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <form asp-controller="Users" asp-action="ResetPassword">
+                <div class="modal-body">
+                    <div class="form-group fv-plugins-icon-container">
+                        <label>
+                            Username:&nbsp;<b id="username_reset" style="color: #0000FF"></b>
+                            - Tên tài khoản:&nbsp;<b id="name_reset" style="color: #0000FF"></b>
+                        </label>
+
+                    </div>
+                    <input hidden id="id_reset" name="id_reset" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-danger font-weight-bold" data-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Đồng ý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function getTowns() {
+        $.ajax({
+            url: '/Ajax/GetTowns',
+            type: 'POST',
+            data: {
+                MaHuyen: $('#mahuyen_create').val(),
+                KeySelect: 'maxa_create'
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success('Success');
+                    $('#maxa_create').replaceWith(data.message);
+                } else {
+                    toastr.error(data.message, "Lỗi!");
+                }
+            }
+        })
+    }
+    function getTownsE() {
+        $.ajax({
+            url: '/Ajax/GetTowns',
+            type: 'POST',
+            data: {
+                MaHuyen: $('#mahuyen_edit').val(),
+                KeySelect: 'maxa_edit'
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success('Success');
+                    $('#maxa_edit').replaceWith(data.message);
+                } else {
+                    toastr.error(data.message, "Lỗi!");
+                }
+            }
+        })
+    }
+    function Store() {
+
+        $.ajax({
+            url: '/Users/Store',
+            type: 'POST',
+            data: {
+                MaHuyen: $('#mahuyen_create').val(),
+                MaXa: $('#maxa_create').val(),
+                Name: $('#name_create').val(),
+                Username: $('#username_create').val(),
+                Password: $('#password_create').val(),
+                Group: $('#group_create').val()
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success(data.message);
+                    location.reload();
+                } else {
+                    toastr.error(data.message, "Lỗi!");
+                }
+            }
+        })
+    }
+
+    function getId(id, username, name) {
+        document.getElementById("id_delete").value = id;
+        document.getElementById("username_delete").innerHTML = username;
+        document.getElementById("name_delete").innerHTML = name;
+    }
+
+    function editId(id_edit) {
+        $.ajax({
+            url: '/Users/Edit',
+            type: 'POST',
+            data: {
+                id: id_edit,
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success("Success!");
+                    $('#edit_thongtin').replaceWith(data.message);
+                } else {
+                    toastr.error(data.message, "Lỗi!!!");
+                }
+            }
+        })
+    }
+
+    function Update() {
+        $.ajax({
+            url: '/Users/Update',
+            type: 'POST',
+            data: {
+                Username: $('#username_edit').val(),
+                Name: $('#name_edit').val(),
+                Status: $('#status_edit').val(),
+                Group: $('#group_edit').val(),
+                Password: $('#password_edit').val(),
+                Id: $('#id_edit').val(),
+            },
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.success(data.message);
+                    location.reload();
+                } else {
+                    toastr.error(data.message, "Lỗi!");
+                }
+            }
+        })
+    }
+
+    function SetReset(id, username, name) {
+        document.getElementById("id_reset").value = id;
+        document.getElementById("username_reset").innerHTML = username;
+        document.getElementById("name_reset").innerHTML = name;
+    }
+</script>

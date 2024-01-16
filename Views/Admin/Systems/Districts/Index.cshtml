@@ -1,0 +1,78 @@
+﻿@model IEnumerable<QLHN.Models.Systems.Districts>
+@section custom_style{
+    <link rel="stylesheet" type="text/css" href="~/Admin/assets/datatables/bootstrap/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="~/Admin/assets/datatables/bootstrap/dataTables.css" />
+}
+
+@section custom_script{
+    <script type="text/javascript" src="~/Admin/assets/datatables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/Admin/assets/datatables/bootstrap/dataTables.bootstrap.js"></script>
+    <script src="~/Admin/assets/datatables/scripts/table-managed.js"></script>
+    <script>
+        $(document).ready(function () {
+            TableManaged.init();
+        });
+    </script>
+}
+@{
+    int record_id = 1;
+}
+<div class="card card-custom wave wave-animate-slower">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                @ViewData["Title"]
+                <span class="d-block text-muted pt-2 font-size-sm">Danh mục quận/ huyện</span>
+            </h3>
+        </div>
+        <div class="card-toolbar">
+            @if (Funtions_Global.CheckPermission(HttpContextAccessor.HttpContext.Session, "systems.districts", "Create"))
+            {
+                <button type="button" data-target="#Create_Modal" data-toggle="modal" class="btn btn-primary font-weight-bolder" title="Thêm mới">
+                    <i class="la la-plus"></i>Thêm mới
+                </button>
+            }
+        </div>
+    </div>
+    <hr />
+    <div class="card-body">
+        <input hidden id="MaTinh" name="MaTinh" value="@ViewData["MaTinh"]" />
+        <table class="table table-striped table-bordered table-hover" id="sample_3">
+            <thead>
+                <tr style="text-align:center">
+                    <th width="5%">#</th>   
+                    <th>Mã huyện</th>
+                    <th>Tên huyện</th>
+                    <th width="15%">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="text-align:center" width="5%">@(record_id++)</td>
+
+                        <td style="font-weight:bold">@item.MaHuyen</td>
+                        <td style="font-weight:bold;color:blue">@item.TenHuyen</td>
+                        <td>
+                            @if (Funtions_Global.CheckPermission(HttpContextAccessor.HttpContext.Session, "systems.districts", "Edit"))
+                            {                               
+                                <button type="button" onclick="editId('@item.Id')" data-target="#Edit_Modal" data-toggle="modal"
+                                        class="btn btn-sm btn-clean btn-icon" title="Chỉnh sửa">
+                                    <i class="icon-lg la la-edit text-primary"></i>
+                                </button>
+                            }
+                            @if (Funtions_Global.CheckPermission(HttpContextAccessor.HttpContext.Session, "systems.districts", "Delete"))
+                            {
+                                <button type="button" class="btn btn-sm btn-clean btn-icon" title="Xóa" data-toggle="modal" data-target="#Delete_Modal" onclick="getId('@item.Id','@item.TenHuyen')">
+                                    <i class="icon-lg la la-trash text-danger"></i>
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Admin/Systems/Districts/Modal.cshtml")

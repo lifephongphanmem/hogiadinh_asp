@@ -1,0 +1,120 @@
+﻿@model QLHN.Models.Systems.Users
+@section custom_style{
+}
+
+@section custom_script{
+}
+<div class="card card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <h3 class="card-label">
+                @ViewData["Title"]
+                <span class="d-block text-muted pt-2 font-size-sm">
+                    Chỉnh sửa thông tin đơn vị
+                </span>
+            </h3>
+        </div>
+    </div>
+    <!--begin::Form-->
+    <form asp-controller="Home" asp-action="Update" method="post">
+        <div class="card-body">
+            <div class="row">
+                <input hidden asp-for="Id" />
+                <div class="col-xl-6">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Tên đơn vị chủ quản</label>
+                        <input asp-for="TenDonViChuQuan" class="form-control" autofocus />
+                    </div>
+                    <!--end::Input-->
+                </div>
+                <div class="col-xl-6">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Tên đơn vị</label>
+                        <input asp-for="TenDonVi" class="form-control" />
+                    </div>
+                    <!--end::Input-->
+                </div>
+                <div class="col-xl-6">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Bộ phận:</label>
+                        <input asp-for="TenBoPhan" class="form-control" />
+                    </div>
+                    <!--end::Input-->
+                </div>
+                <div class="col-xl-6">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Mã đơn vị sử dụng ngân sách</label>
+                        <input asp-for="MaDonViSDNS" class="form-control">
+                    </div>
+                    <!--end::Input-->
+                </div>
+                <div class="col-xl-6">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Địa danh</label>
+                        <input asp-for="DiaDanh" class="form-control">
+                    </div>
+                    <!--end::Input-->
+                </div>
+                @* <div class="col-xl-6">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Chức danh người ký</label>
+                        <textarea asp-for="ChucDanhNguoiKy" class="form-control" rows="2"></textarea>
+                    </div>
+                    <!--end::Input-->
+                </div>    *@             
+                @* <div class="col-xl-12">
+                    <!--begin::Input-->
+                    <div class="form-group fv-plugins-icon-container">
+                        <label style="font-weight:bold">Căn cứ in quyết định:</label>
+                        <textarea asp-for="CanCu" class="form-control" rows="10"></textarea>
+                    </div>
+                    <!--end::Input-->
+                </div> *@
+
+
+
+                <!--<div class="col-xl-6">-->
+                <!--begin::Input-->
+                <!--<div class="form-group fv-plugins-icon-container">
+                    <label>Thủ trưởng đơn vị</label>
+                    <input asp-for="ThuTruongDonVi" class="form-control">
+                </div>-->
+                <!--end::Input-->
+                <!--</div>
+                <div class="col-xl-6">-->
+                <!--begin::Input-->
+                <!--<div class="form-group fv-plugins-icon-container">
+                    <label>Kế toán trưởng</label>
+                    <input asp-for="KeToanTruong" class="form-control">
+                </div>-->
+                <!--end::Input-->
+                <!--</div>
+                <div class="col-xl-6">-->
+                <!--begin::Input-->
+                <!--<div class="form-group fv-plugins-icon-container">
+                    <label>Người lập biểu</label>
+                    <input asp-for="NguoiLapBieu" class="form-control">
+                </div>-->
+                <!--end::Input-->
+                <!--</div>-->
+            </div>
+        </div>
+        <div class="card-footer" style="text-align:center">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-danger"><i class="la la-reply"></i>Quay lại</a>&ensp;
+            <button type="reset" class="btn btn-secondary"><i class="la la-refresh"></i>Nhập lại</button>&ensp;
+            <button type="submit" class="btn btn-primary mr-2"><i class="la la-check"></i>Cập nhật</button>
+        </div>
+    </form>
+    <!--end::Form-->
+</div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
